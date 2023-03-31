@@ -40,7 +40,7 @@ public class List {
     private int taskCount;
     
 //    @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE} )
     @JoinColumn(name="user_id")
     private User user;
     

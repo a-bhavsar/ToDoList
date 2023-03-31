@@ -58,17 +58,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public String deleteUser(int userId) {
+    public User deleteUser(int userId) {
         Optional<User> user = userRepository.findById(userId);
         User theUser = null;
         if(user.isPresent()){
             theUser = user.get();
         }
         userRepository.deleteById(userId);
-        if(theUser!=null){
-            return "User deleted with Id : " + userId;   
-        }
-        return "User does not exists";
+        return theUser;
         
     }
     

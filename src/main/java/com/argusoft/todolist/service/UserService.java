@@ -15,5 +15,5 @@ public interface UserService {
     public User getUser(int userId);
     public User createUser(User user);
     public User updateUser(int userId, User user);
-    public String deleteUser(int userId);
+    public User deleteUser(int userId);
 }

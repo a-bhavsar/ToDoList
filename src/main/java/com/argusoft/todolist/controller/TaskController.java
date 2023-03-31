@@ -8,12 +8,16 @@ import com.argusoft.todolist.entity.List;
 import com.argusoft.todolist.entity.Task;
 import com.argusoft.todolist.entity.User;
 import com.argusoft.todolist.repository.UserRepository;
+import com.argusoft.todolist.service.TaskService;
+import com.argusoft.todolist.service.UserService;
 import jakarta.persistence.EntityManager;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,49 +28,34 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/todolist/users/{userId}/lists/{listId}")
+@RequestMapping("/todolist/users/{userId}/lists/{listId}/")
 public class TaskController {
     
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired 
+    private TaskService taskService;
     
-    @Autowired
-    private EntityManager entityManager;
-    
-    @GetMapping("/tasks")
-    public java.util.List<Task> getAllTasks(@PathVariable int userId, @PathVariable int listId){
-        Optional<User> user = userRepository.findById(userId);
-        User theUser = null;
-        if(user.isPresent()){
-            theUser = user.get();
-        }
-        java.util.List<List> lists = theUser.getLists();
-        for(List l : lists){
-            if(l.getId() == listId){
-                java.util.List<Task> tasks = l.getTasks();
-                return tasks;
-            }
-        }
-        return null;
-    }
-    
-    @PostMapping("/tasks")
-    public Task createTask(@PathVariable int userId, @PathVariable int listId, @RequestBody Task task){
-        Optional<User> user = userRepository.findById(userId);
-        User theUser = null;
-        if(user.isPresent()){
-            theUser = user.get();
-        }
-        java.util.List<List> lists = theUser.getLists();
-        for(List l : lists){
-            if(l.getId() == listId){
-                java.util.List<Task> tasks = l.getTasks();
-                tasks.add(task);
-                theUser.setTasks(tasks);
-                userRepository.save(theUser);
-                return task;
-            }
-        }
-        return null;
-    }
+   @PostMapping("tasks")
+   public Task createTask(@PathVariable int userId, @PathVariable int listId, @RequestBody Task task){
+       return taskService.createTask(userId, listId, task);
+   }
+   
+   @GetMapping("tasks")
+   public java.util.List<Task> getAllTasks(@PathVariable int userId, @PathVariable int listId){
+       return taskService.getAllTasks(userId, listId);
+   }
+   
+   @GetMapping("tasks/{taskId}")
+   public Task getSingleTask(@PathVariable int userId, @PathVariable int listId, @PathVariable int taskId){
+       return taskService.getSingleTask(userId, listId, taskId);
+   }
+   
+   @PutMapping("tasks/{taskId}")
+   public Task updateTask(@PathVariable int userId, @PathVariable int listId, @PathVariable int taskId, @RequestBody Task task){
+       return taskService.updateTask(userId, listId, taskId, task);
+   }
+   
+   @DeleteMapping("tasks/{taskId}")
+   public String deleteTask(@PathVariable int userId, @PathVariable int listId, @PathVariable int taskId){
+       return taskService.deleteTask(userId, listId, taskId); 
+   }
 }

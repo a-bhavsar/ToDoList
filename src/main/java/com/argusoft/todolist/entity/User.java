@@ -41,10 +41,6 @@ public class User {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private java.util.List<List> lists;
-    
-    @JsonIgnore
-    @OneToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy= "user")
-    private java.util.List<Task> tasks;
 
     public User() {
     }
@@ -98,17 +94,9 @@ public class User {
         this.lists = lists;
     }
 
-    public java.util.List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(java.util.List<Task> tasks) {
-        this.tasks = tasks;
-    }
-
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", username=" + username + ", password=" + password + ", mobileNo=" + mobileNo + ", lists=" + lists + ", tasks=" + tasks + '}';
+        return "User{" + "id=" + id + ", username=" + username + ", password=" + password + ", mobileNo=" + mobileNo + ", lists=" + lists + '}';
     }
     
 }

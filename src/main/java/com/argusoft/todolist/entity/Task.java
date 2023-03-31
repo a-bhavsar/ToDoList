@@ -42,10 +42,6 @@ public class Task {
     @JoinColumn(name="list_id")
     private List list;
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="user_id")
-    private User user;
-    
     @Column(name="start_date")
     private Timestamp startDate;
 
@@ -92,14 +88,6 @@ public class Task {
         this.list = list;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -118,7 +106,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" + "id=" + id + ", title=" + title + ", description=" + description + ", status=" + status + ", list=" + list + ", user=" + user + ", startDate=" + startDate + ", endDate=" + endDate + '}';
+        return "Task{" + "id=" + id + ", title=" + title + ", description=" + description + ", status=" + status + ", list=" + list + ", startDate=" + startDate + ", endDate=" + endDate + '}';
     }
 
     public Task() {

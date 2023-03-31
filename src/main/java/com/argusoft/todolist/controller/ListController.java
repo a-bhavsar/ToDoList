@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.argusoft.todolist.repository.UserRepository;
 import com.argusoft.todolist.service.ListService;
+import com.argusoft.todolist.utils.ResponseBodyObj;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,14 +35,37 @@ public class ListController {
     private ListService listService;
     
     @GetMapping("lists")
-    public java.util.List<List> getLists(@PathVariable int userId){
-        return listService.getLists(userId);
+    public ResponseEntity<ResponseBodyObj<java.util.List<List>>> getLists(@PathVariable int userId){
+        
+        java.util.List<List> lists = listService.getLists(userId);
+        String message;
+        HttpStatus statusCode = HttpStatus.OK;
+        if(lists.size() == 0){
+            message = "No Lists Found";
+        }
+        else{
+            message = "List of Lists";
+        }
+        ResponseBodyObj obj = new ResponseBodyObj(lists, message, statusCode);
+        return new ResponseEntity(obj, statusCode);
     }
     
     @PostMapping("lists")
-    public List addListToUser(@PathVariable int userId, @RequestBody List list){
-        System.out.println("I am the list" + list);
-        return listService.addListToUser(userId, list);
+    public ResponseEntity<ResponseBodyObj<List>> addListToUser(@PathVariable int userId, @RequestBody List list){
+        List l = listService.addListToUser(userId, list);
+        String message;
+        HttpStatus statusCode;
+        if(l == null){
+            message = "User not found";
+            statusCode = HttpStatus.NOT_FOUND;
+        }
+        else{
+            message = "List Added Successfully";
+            statusCode = HttpStatus.OK;
+        }
+        ResponseBodyObj obj = new ResponseBodyObj(l, message, statusCode);
+        return new ResponseEntity(obj, statusCode);
+        
     }
     
     @GetMapping("lists/{listId}")
