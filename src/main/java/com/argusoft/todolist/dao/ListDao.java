@@ -5,7 +5,7 @@
 package com.argusoft.todolist.dao;
 
 import com.argusoft.todolist.entity.List;
-import org.springframework.stereotype.Service;
+import com.argusoft.todolist.utils.ListEntity;
 
 /**
  *
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public interface ListDao {
     public java.util.List<List> getLists(int userId);
     public List addListToUser(int userId, List list);
-    public List getSingleList(int userId, int listId);
-    public List updateList(int userId, int listId, List list);
-    public String deleteList(int userId, int listId);
+    public ListEntity getSingleList(int userId, int listId);
+    public ListEntity updateList(int userId, int listId, List list);
+    public ListEntity deleteList(int userId, int listId);
 }

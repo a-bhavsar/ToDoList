@@ -10,6 +10,7 @@ import com.argusoft.todolist.entity.User;
 import com.argusoft.todolist.repository.ListRepository;
 import com.argusoft.todolist.repository.TaskRepository;
 import com.argusoft.todolist.repository.UserRepository;
+import com.argusoft.todolist.utils.TaskEntity;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,131 +20,191 @@ import org.springframework.stereotype.Service;
  *
  * @author arpit
  */
-
 @Service
 public class TaskDaoImpl implements TaskDao {
+
     @Autowired
-    private TaskRepository taskRepository; 
-    
+    private TaskRepository taskRepository;
+
     @Autowired
     private ListRepository listRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
-    
-    private boolean checkUser(int userId){
+
+    private boolean checkUser(int userId) {
         Optional<User> user = userRepository.findById(userId);
         User theUser = null;
-        if(user.isPresent()){
+        if (user.isPresent()) {
             theUser = user.get();
         }
-        if(theUser==null){
+        if (theUser == null) {
             return false;
         }
         return true;
     }
-    
-    private boolean checkList(int listId){
+
+    private boolean checkList(int listId) {
         Optional<List> list = listRepository.findById(listId);
         List theList = null;
-        if(list.isPresent()){
+        if (list.isPresent()) {
             theList = list.get();
         }
-        if(theList==null){
+        if (theList == null) {
             return false;
         }
         return true;
-    }
-    
-    @Override
-    public Task createTask(int userId, int listId, Task task){
-        if(!checkUser(userId)){
-            return null;
-        }
-        Optional<List> list = listRepository.findById(listId);
-        List theList = null;
-        if(list.isPresent()){
-            theList = list.get();
-        }
-        if(theList == null){
-            return null;
-        }
-        task.setList(theList);
-        taskRepository.save(task);
-        return task;
-    }
-    
-    @Override
-    public java.util.List<Task> getAllTasks(int userId, int listId){
-        if(!checkUser(userId)){
-            return null;
-        }
-        java.util.List<Task> tasks = taskRepository.findAll();
-        java.util.List<Task> myTasks = new ArrayList<>();
-        for(Task task : tasks){
-            if(task.getList().getId() == listId){
-                myTasks.add(task);
-            }
-        }
-        return myTasks;
     }
 
     @Override
-    public Task getSingleTask(int userId, int listId, int taskId) {
-        if(!checkUser(userId)){
-            return null;
+    public TaskEntity createTask(int userId, int listId, Task task) {
+        if (!checkUser(userId)) {
+            return new TaskEntity(null, true, false);
+        }
+        Optional<List> list = listRepository.findById(listId);
+        List theList = null;
+        if (list.isPresent()) {
+            theList = list.get();
+        }
+        if (theList == null) {
+            return new TaskEntity(null, false, true);
+        } else if (theList.getUser().getId() != userId) {
+            return new TaskEntity(null, false, true);
+        } else {
+            task.setList(theList);
+            taskRepository.save(task);
+            return new TaskEntity(task, false, false);
+        }
+    }
+
+    @Override
+    public TaskEntity getAllTasks(int userId, int listId) {
+        if (!checkUser(userId)) {
+            return new TaskEntity(true, false, null);
+        } else if (!checkList(listId)) {
+            return new TaskEntity(false, true, null);
+        } else {
+            List list = listRepository.findById(listId).get();
+            if (list.getUser().getId() != userId) {
+                return new TaskEntity(false, true, null);
+            } else {
+                java.util.List<Task> tasks = taskRepository.findAll();
+                java.util.List<Task> myTasks = new ArrayList<>();
+                for (Task task : tasks) {
+                    if (task.getList().getId() == listId) {
+                        myTasks.add(task);
+                    }
+                }
+                return new TaskEntity(false, false, myTasks);
+            }
+
+        }
+
+    }
+
+    @Override
+    public TaskEntity getSingleTask(int userId, int listId, int taskId) {
+        if (!checkUser(userId)) {
+            return new TaskEntity(null, true, false);
+        } else if (!checkList(listId)) {
+            return new TaskEntity(null, false, true);
+        } else {
+            List list = listRepository.findById(listId).get();
+            if (list.getUser().getId() != userId) {
+                return new TaskEntity(null, false, true);
+            } else {
+                Optional<Task> task = taskRepository.findById(taskId);
+                Task theTask = null;
+                if (task.isPresent()) {
+                    theTask = task.get();
+                }
+                if (theTask == null) {
+                    return new TaskEntity(null, true, true);
+                } else {
+                    if (theTask.getList().getId() != listId) {
+                        return new TaskEntity(null, true, true);
+                    } else {
+                        return new TaskEntity(theTask, false, false);
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    @Override
+    public TaskEntity updateTask(int userId, int listId, int taskId, Task task) {
+        if (!checkUser(userId)) {
+            return new TaskEntity(null, true, false);
+        } else if (!checkList(listId)) {
+            return new TaskEntity(null, false, true);
+        } else {
+            List list = listRepository.findById(listId).get();
+            if (list.getUser().getId() != userId) {
+                return new TaskEntity(null, false, true);
+            } else {
+                Optional<Task> t = taskRepository.findById(taskId);
+                Task theTask = null;
+                if (t.isPresent()) {
+                    theTask = t.get();
+                }
+                if (theTask == null) {
+                    return new TaskEntity(null, true, true);
+                }
+                else{
+                    if(theTask.getList().getId()!=listId){
+                        return new TaskEntity(null, true, true);
+                    }
+                    else{
+                        theTask.setTitle(task.getTitle());
+                        theTask.setDescription(task.getDescription());
+                        theTask.setStatus(task.getStatus());
+                        theTask.setStartDate(task.getStartDate());
+                        theTask.setEndDate(task.getEndDate());
+                        taskRepository.save(theTask);
+                        return new TaskEntity(theTask, false, false);
+                    } 
+                }
+            }
+
+            
+        }
+
+    }
+
+    @Override
+    public TaskEntity deleteTask(int userId, int listId, int taskId) {
+        if (!checkUser(userId)) {
+            return new TaskEntity(null, true, false);
+        }
+        else if (!checkList(listId)) {
+            return new TaskEntity(null, false, true);
+        }
+        else{
+            List list = listRepository.findById(listId).get();
+            if(list.getUser().getId() != userId){
+                return new TaskEntity(null, false, true);
+            }
+            Optional<Task> task = taskRepository.findById(taskId);
+            Task theTask = null;
+            if (task.isPresent()) {
+                theTask = task.get();
+            }
+            if (theTask == null) {
+                return new TaskEntity(null, true, true);
+            }
+            else if(theTask.getList().getId() != listId){
+                return new TaskEntity(null, true, true);
+            }
+            else{
+                taskRepository.delete(theTask);
+                return new TaskEntity(theTask, false, false);
+            }
+            
         }
         
-        Optional<Task> task = taskRepository.findById(taskId);
-        Task theTask = null;
-        if(task.isPresent()){
-            theTask = task.get();
-        }
-        return theTask;
-    }
-    
-    @Override
-    public Task updateTask(int userId, int listId, int taskId, Task task){
-        if(!checkUser(userId)){
-            return null;
-        }
-        if(!checkList(listId)){
-            return null;
-        }
-        Optional<Task> t = taskRepository.findById(taskId);
-        Task theTask = null;
-        if(t.isPresent()){
-            theTask = t.get();
-        }
-        if(theTask==null){
-            return null;
-        }
-        theTask.setTitle(task.getTitle());
-        theTask.setDescription(task.getDescription());
-        theTask.setStatus(task.getStatus());
-        theTask.setStartDate(task.getStartDate());
-        theTask.setEndDate(task.getEndDate());
-        taskRepository.save(theTask);
-        return theTask;
-    }
-    
-    @Override
-    public String deleteTask(int userId, int listId, int taskId){
-        if(!checkUser(userId)){
-            return "User does not exists";
-        }
-        if(!checkList(listId)){
-            return "List does not exists";
-        }
-        Optional<Task> task = taskRepository.findById(taskId);
-        Task theTask = null;
-        if(task.isPresent()){
-            theTask = task.get();
-        }
-        if(theTask == null){
-            return "Task does not exists";
-        }
-        taskRepository.delete(theTask);
-        return "Task deleted with id - " + taskId;
     }
 }

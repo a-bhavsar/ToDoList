@@ -96,7 +96,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", username=" + username + ", password=" + password + ", mobileNo=" + mobileNo + ", lists=" + lists + '}';
+        return "User{" + "id=" + id + ", username=" + username + ", password=" + password + ", mobileNo=" + mobileNo + '}';
     }
     
 }

@@ -6,6 +6,7 @@ package com.argusoft.todolist.service;
 
 import com.argusoft.todolist.dao.TaskDao;
 import com.argusoft.todolist.entity.Task;
+import com.argusoft.todolist.utils.TaskEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,27 +22,27 @@ public class TaskServiceImpl implements TaskService {
     private TaskDao taskDao;
 
     @Override
-    public Task createTask(int userId, int listId, Task task) {
+    public TaskEntity createTask(int userId, int listId, Task task) {
         return taskDao.createTask(userId, listId, task);
     }
 
     @Override
-    public java.util.List<Task> getAllTasks(int userId, int listId) {
+    public TaskEntity getAllTasks(int userId, int listId) {
         return taskDao.getAllTasks(userId, listId);
     }
 
     @Override
-    public Task getSingleTask(int userId, int listId, int taskId) {
+    public TaskEntity getSingleTask(int userId, int listId, int taskId) {
         return taskDao.getSingleTask(userId, listId, taskId);
     }
     
     @Override
-    public Task updateTask(int userId, int listId, int taskId, Task task){
+    public TaskEntity updateTask(int userId, int listId, int taskId, Task task){
         return taskDao.updateTask(userId, listId, taskId, task);
     }
 
     @Override
-    public String deleteTask(int userId, int listId, int taskId) {
+    public TaskEntity deleteTask(int userId, int listId, int taskId) {
         return taskDao.deleteTask(userId, listId, taskId);
     }
     

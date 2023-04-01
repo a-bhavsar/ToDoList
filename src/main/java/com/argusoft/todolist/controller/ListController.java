@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.argusoft.todolist.repository.UserRepository;
 import com.argusoft.todolist.service.ListService;
+import com.argusoft.todolist.utils.ListEntity;
 import com.argusoft.todolist.utils.ResponseBodyObj;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -69,19 +70,67 @@ public class ListController {
     }
     
     @GetMapping("lists/{listId}")
-    public List getSingleList(@PathVariable int userId, @PathVariable int listId){
-        return listService.getSingleList(userId, listId);
+    public ResponseEntity<ResponseBodyObj<List>> getSingleList(@PathVariable int userId, @PathVariable int listId){
+        ListEntity l = listService.getSingleList(userId, listId);
+        String message;
+        HttpStatus statusCode;
+        if(l.getList()==null && l.isUser()){
+            message = "User not found";
+            statusCode = HttpStatus.NOT_FOUND;
+        }
+        else if(l.getList()==null && !l.isUser()){
+            message =  "List not found";
+            statusCode = HttpStatus.NOT_FOUND;
+        }
+        else{
+            message = "List found";
+            statusCode = HttpStatus.OK;  
+        }
+        ResponseBodyObj obj = new ResponseBodyObj(l.getList(), message, statusCode);
+        return new ResponseEntity<>(obj, statusCode);
     }
     
     @Transactional
     @PutMapping("lists/{listId}")
-    public List updateList(@PathVariable int userId, @PathVariable int listId, @RequestBody List list){
-        return listService.updateList(userId, listId, list);
+    public ResponseEntity<ResponseBodyObj<List>> updateList(@PathVariable int userId, @PathVariable int listId, @RequestBody List list){
+        ListEntity listEntity = listService.updateList(userId, listId, list);
+        String message;
+        HttpStatus statusCode;
+        if(listEntity.getList()==null && listEntity.isUser()){
+            message = "User not found";
+            statusCode = HttpStatus.NOT_FOUND;
+        }
+        else if(listEntity.getList()==null && !listEntity.isUser()){
+            message = "List not found";
+            statusCode = HttpStatus.NOT_FOUND;
+        }
+        else{
+            message = "List updated";
+            statusCode = HttpStatus.OK;
+        }
+        ResponseBodyObj obj = new ResponseBodyObj(listEntity.getList(), message, statusCode);
+        return new ResponseEntity(obj, statusCode);
     }
     
     @Transactional
     @DeleteMapping("/lists/{listId}")
-    public String deleteList(@PathVariable int userId, @PathVariable int listId){
-       return listService.deleteList(userId, listId);
+    public ResponseEntity<ResponseBodyObj<List>> deleteList(@PathVariable int userId, @PathVariable int listId){
+       ListEntity listEntity = listService.deleteList(userId, listId);
+       String message;
+       HttpStatus statusCode;
+       if(listEntity.getList()==null && listEntity.isUser()){
+           message = "User not found";
+           statusCode = HttpStatus.NOT_FOUND;
+       }
+       else if(listEntity.getList()==null && !listEntity.isUser()){
+           message = "List not found";
+           statusCode = HttpStatus.NOT_FOUND;
+       }
+       else{
+           message = "List deleted";
+           statusCode = HttpStatus.OK;
+       }
+        ResponseBodyObj obj = new ResponseBodyObj(listEntity.getList(), message, statusCode);
+        return new ResponseEntity(obj, statusCode);
     }
 }

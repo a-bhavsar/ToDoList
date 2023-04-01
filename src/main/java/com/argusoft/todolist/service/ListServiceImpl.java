@@ -5,7 +5,8 @@
 package com.argusoft.todolist.service;
 
 import com.argusoft.todolist.dao.ListDao;
-import java.util.List;
+import com.argusoft.todolist.entity.List;
+import com.argusoft.todolist.utils.ListEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,27 +22,27 @@ public class ListServiceImpl implements ListService{
     private ListDao listDao;
 
     @Override
-    public List<com.argusoft.todolist.entity.List> getLists(int userId) {
+    public java.util.List<List> getLists(int userId) {
         return listDao.getLists(userId);
     }
 
     @Override
-    public com.argusoft.todolist.entity.List addListToUser(int userId, com.argusoft.todolist.entity.List list) {
+    public List addListToUser(int userId, com.argusoft.todolist.entity.List list) {
         return listDao.addListToUser(userId, list);    
     }
 
     @Override
-    public com.argusoft.todolist.entity.List getSingleList(int userId, int listId) {
+    public ListEntity getSingleList(int userId, int listId) {
         return listDao.getSingleList(userId, listId);
     }
 
     @Override
-    public com.argusoft.todolist.entity.List updateList(int userId, int listId, com.argusoft.todolist.entity.List list) {
+    public ListEntity updateList(int userId, int listId, com.argusoft.todolist.entity.List list) {
         return listDao.updateList(userId, listId, list);
     }
 
     @Override
-    public String deleteList(int userId, int listId) {
+    public ListEntity deleteList(int userId, int listId) {
         return listDao.deleteList(userId, listId);    
     }
     

@@ -6,6 +6,7 @@ package com.argusoft.todolist.dao;
 
 import com.argusoft.todolist.entity.Task;
 import com.argusoft.todolist.repository.ListRepository;
+import com.argusoft.todolist.utils.TaskEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -14,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 public interface TaskDao {
-    public Task createTask(int userId, int listId, Task task);    
-    public java.util.List<Task> getAllTasks(int userId, int listId);
-    public Task getSingleTask(int userId, int listId, int taskId);
-    public Task updateTask(int userId, int listId, int taskId, Task task);
-    public String deleteTask(int userId, int listId, int taskId);
+    public TaskEntity createTask(int userId, int listId, Task task);    
+    public TaskEntity getAllTasks(int userId, int listId);
+    public TaskEntity getSingleTask(int userId, int listId, int taskId);
+    public TaskEntity updateTask(int userId, int listId, int taskId, Task task);
+    public TaskEntity deleteTask(int userId, int listId, int taskId);
 }

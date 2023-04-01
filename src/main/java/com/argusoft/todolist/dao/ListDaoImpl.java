@@ -9,6 +9,7 @@ import com.argusoft.todolist.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import com.argusoft.todolist.entity.List;
 import com.argusoft.todolist.repository.ListRepository;
+import com.argusoft.todolist.utils.ListEntity;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -58,6 +59,7 @@ public class ListDaoImpl implements ListDao{
         java.util.List<List> lists = listRepository.findAll();
         java.util.List<List> myLists = new ArrayList<>();
         for(List l : lists){
+            System.out.println("List is " + l);
             if(l.getUser().getId() == userId){
                 myLists.add(l);
             }
@@ -76,54 +78,72 @@ public class ListDaoImpl implements ListDao{
         if(user.isPresent()){
             theUser = user.get();
         }
-        return listRepository.save( new List(list.getTitle(), 
+        return listRepository.save(new List(list.getTitle(), 
                 list.getDescription(), 0, theUser));        
     }
 
     @Override
-    public List getSingleList(int userId, int listId) {
+    public ListEntity getSingleList(int userId, int listId) {
+        boolean isUser;
         if(!checkUser(userId)){
-            return null;
+            isUser = true;
+            return new ListEntity(null, true);
         }
         Optional<List> list = listRepository.findById(listId);
         List theList = null;
         if(list.isPresent()){
             theList = list.get();
+            System.out.println("list is" + list);
+            if(theList.getUser().getId() == userId){
+               return new ListEntity(theList, false);
+            }
+            else{
+                return new ListEntity(null, false);
+            }
         }
-        return theList;
+        
+        return new ListEntity(theList, false);
     }
 
     @Override
     @Transactional
-    public List updateList(int userId, int listId, List list) {
+    public ListEntity updateList(int userId, int listId, List list) {
         if(!checkUser(userId)){
-            return null;
+            return new ListEntity(null, true);
         }
         Optional<List> l = listRepository.findById(listId);
         List theList = null;
         if(l.isPresent()){
             theList = l.get();
+            theList.setTitle(list.getTitle());
+            theList.setDescription(list.getDescription());
+            if(theList.getUser().getId() == listId){
+                listRepository.save(theList);
+                return new ListEntity(theList, false);
+            }
+            else{
+                return new ListEntity(null, false);
+            }
         }
-        theList.setTitle(list.getTitle());
-        theList.setDescription(list.getDescription());
-        listRepository.save(theList);
-        return list;
+        return new ListEntity(theList, false);
     }
 
     @Override
     @Transactional
-    public String deleteList(int userId, int listId) {
+    public ListEntity deleteList(int userId, int listId) {
        if(!checkUser(userId)){
-           return null;
+           return new ListEntity(null, true);
        }
        Optional<List> l = listRepository.findById(listId);
        List list = null;
        if(l.isPresent()){
            list = l.get();
+           listRepository.delete(list);
+           return new ListEntity(list, false);
        }
-        System.out.println("list is " + list);
-        listRepository.delete(list);
-        return "List deleted with id " + listId;     
+       else{
+           return new ListEntity(null, false);
+       }   
     }
     
 }
