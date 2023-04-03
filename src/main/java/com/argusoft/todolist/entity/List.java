@@ -44,7 +44,7 @@ public class List {
     @JoinColumn(name="user_id")
     private User user;
     
-    @OneToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "list")
     private java.util.List<Task> tasks;
         
 

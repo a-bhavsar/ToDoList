@@ -38,9 +38,10 @@ public class Task {
     @Column(name="status")
     private String status;
     
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name="list_id")
     private List list;
+    
     
     @Column(name="start_date")
     private Timestamp startDate;
