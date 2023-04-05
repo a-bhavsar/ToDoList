@@ -5,6 +5,7 @@
 package com.argusoft.todolist.dao;
 
 import com.argusoft.todolist.entity.User;
+import com.argusoft.todolist.utils.UserEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Service;
 public interface UserDao {
     public java.util.List<User> getAllUser();
     public User getUser(int userId);
-    public User createUser(User user);
+    public UserEntity createUser(User user);
     public User updateUser(int userId, User user);
     public User deleteUser(int userId);
+    public UserEntity loginUser(User user);
 }

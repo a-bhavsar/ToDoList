@@ -5,6 +5,7 @@
 package com.argusoft.todolist.service;
 
 import com.argusoft.todolist.entity.User;
+import com.argusoft.todolist.utils.UserEntity;
 
 /**
  *
@@ -13,7 +14,8 @@ import com.argusoft.todolist.entity.User;
 public interface UserService {
     public java.util.List<User> getAllUser();
     public User getUser(int userId);
-    public User createUser(User user);
+    public UserEntity createUser(User user);
     public User updateUser(int userId, User user);
     public User deleteUser(int userId);
+    public UserEntity loginUser(User user);
 }

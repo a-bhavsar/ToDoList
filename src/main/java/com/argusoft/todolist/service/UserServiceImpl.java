@@ -6,6 +6,7 @@ package com.argusoft.todolist.service;
 
 import com.argusoft.todolist.dao.UserDao;
 import com.argusoft.todolist.entity.User;
+import com.argusoft.todolist.utils.UserEntity;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
+    public UserEntity createUser(User user) {
         return userDao.createUser(user);
     }
 
@@ -44,6 +45,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User deleteUser(int userId) {
         return userDao.deleteUser(userId);
+    }
+    
+    @Override
+    public UserEntity loginUser(User user){
+        return userDao.loginUser(user);
     }
     
 }

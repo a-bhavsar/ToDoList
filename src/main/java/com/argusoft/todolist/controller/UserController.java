@@ -8,10 +8,12 @@ import com.argusoft.todolist.entity.User;
 import com.argusoft.todolist.repository.UserRepository;
 import com.argusoft.todolist.service.UserService;
 import com.argusoft.todolist.utils.ResponseBodyObj;
+import com.argusoft.todolist.utils.UserEntity;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/todolist/users")
 public class UserController {
     @Autowired
@@ -66,18 +69,28 @@ public class UserController {
    
     @PostMapping("")
     public ResponseEntity<ResponseBodyObj<User>> createUser(@RequestBody User user){
-        User u = userService.createUser(user);
+        UserEntity u = userService.createUser(user);
+        System.out.println(u);
         String message;
         HttpStatus statusCode;
-        if(u==null){
-            message = "User not found";
-            statusCode = HttpStatus.NOT_FOUND;
-        }        
+        if(!u.isValidUser() && !u.isValidMobile()){
+            message = "Username and mobile already exists";
+            statusCode = HttpStatus.NOT_ACCEPTABLE;
+;        }
+        else if(!u.isValidUser()){
+            message = "Username already exists";
+            statusCode = HttpStatus.NOT_ACCEPTABLE;
+        }
+        else if(!u.isValidMobile()){
+            message = "Mobile Number already exists";
+            statusCode = HttpStatus.NOT_ACCEPTABLE;
+        }
         else{
-            message = "Created user" + u;
+            message = "User Created";
             statusCode = HttpStatus.OK;
         }
-        ResponseBodyObj obj = new ResponseBodyObj(u, message, statusCode);
+        System.out.println("user" + u.getUser());
+        ResponseBodyObj obj = new ResponseBodyObj(u.getUser(), message, statusCode);
         return new ResponseEntity<>(obj, statusCode);
     }
     
@@ -105,6 +118,27 @@ public class UserController {
             statusCode = HttpStatus.OK;
         }
         ResponseBodyObj obj = new ResponseBodyObj(user, message, statusCode);
+        return new ResponseEntity(obj, statusCode);
+    }
+    
+    @PostMapping("login")
+    public ResponseEntity<ResponseBodyObj<User>> loginUser(@RequestBody User user){
+        UserEntity userEntity = userService.loginUser(user);
+        String message;
+        HttpStatus statusCode;
+        if(userEntity.isValidUser() && !userEntity.isNotUser()){
+            message = "Logged In successfully";
+            statusCode = HttpStatus.OK;
+        }
+        else if(!userEntity.isValidUser() && !userEntity.isNotUser()){
+            message = "Bad Credentials";
+            statusCode = HttpStatus.UNAUTHORIZED;
+        }
+        else{
+            message = "User does not exist with username";
+            statusCode = HttpStatus.NOT_FOUND;
+        }
+        ResponseBodyObj obj = new ResponseBodyObj(userEntity.getUser(), message, statusCode);
         return new ResponseEntity(obj, statusCode);
     }
 }

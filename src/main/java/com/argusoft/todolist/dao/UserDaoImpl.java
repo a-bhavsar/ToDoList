@@ -6,6 +6,7 @@ package com.argusoft.todolist.dao;
 
 import com.argusoft.todolist.entity.User;
 import com.argusoft.todolist.repository.UserRepository;
+import com.argusoft.todolist.utils.UserEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,25 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User createUser(User user) {
+    public UserEntity createUser(User user) {
+        
+        List<User> users = getAllUser();
+        for(User u : users){
+            if(u.getUsername().equals(user.getUsername()) && u.getMobileNo().equals(user.getMobileNo())){
+                return new UserEntity(user, false, false, false);
+            }
+            else if(u.getUsername().equals(user.getUsername())){
+                return new UserEntity(user, false, false, true);
+            }
+            else if(u.getMobileNo().equals(user.getMobileNo()))
+            {
+                return new UserEntity(user, true, false, false);
+            }
+        }
+        System.out.println("Why this error");
         User u1 = userRepository.save(new User(user.getUsername(), user.getPassword(), user.getMobileNo()));
-        return u1;
+        System.out.println(u1);
+        return new UserEntity(u1, true, false, true);
     }
 
     @Override
@@ -67,6 +84,23 @@ public class UserDaoImpl implements UserDao {
         userRepository.deleteById(userId);
         return theUser;
         
+    }
+    
+    @Override
+    public UserEntity loginUser(User user){
+        java.util.List<User> users = userRepository.findAll();
+        for(User u : users){
+            if(u.getUsername().equals(user.getUsername())){
+                if(u.getPassword().equals(user.getPassword())){
+                    System.out.println("Logged in user is " + u);
+                    return new UserEntity(u, true, false);
+                }
+                else{
+                    return new UserEntity(user, false, false);
+                }
+            }
+        }
+        return new UserEntity(user, false, true);
     }
     
 }
