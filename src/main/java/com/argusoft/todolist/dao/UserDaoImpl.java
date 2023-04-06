@@ -27,6 +27,7 @@ public class UserDaoImpl implements UserDao {
     public List<User> getAllUser() {
         return userRepository.findAll();
     }
+    
 
     @Override
     public User getUser(int userId) {
@@ -62,6 +63,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User updateUser(int userId, User user) {
+        
+        
         Optional<User> u1 = userRepository.findById(userId);
         User u = null;
         if(u1.isPresent()){

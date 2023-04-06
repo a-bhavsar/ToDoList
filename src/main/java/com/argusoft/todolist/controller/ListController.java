@@ -23,6 +23,7 @@ import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/todolist/users/{userId}/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ListController {
     
     @Autowired
@@ -37,7 +39,7 @@ public class ListController {
     
     @GetMapping("lists")
     public ResponseEntity<ResponseBodyObj<java.util.List<List>>> getLists(@PathVariable int userId){
-        
+           System.out.println("Swagat karo humara");
         java.util.List<List> lists = listService.getLists(userId);
         String message;
         HttpStatus statusCode = HttpStatus.OK;
