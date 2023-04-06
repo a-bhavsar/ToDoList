@@ -40,6 +40,7 @@ public class TaskController {
     
    @PostMapping("tasks")
    public ResponseEntity<ResponseBodyObj<Task>> createTask(@PathVariable int userId, @PathVariable int listId, @RequestBody Task task){
+       
        TaskEntity taskEntity = taskService.createTask(userId, listId, task);
        String message;
        HttpStatus statusCode;
@@ -54,6 +55,7 @@ public class TaskController {
             }
        }
        else{
+           System.out.println("Hello");
            message = "Task created";
            statusCode = HttpStatus.OK;
        }
@@ -68,7 +70,6 @@ public class TaskController {
        TaskEntity taskEntity =  taskService.getAllTasks(userId, listId);
        String message;
        HttpStatus statusCode;
-       System.out.println("List of tasks" + taskEntity);
        if(taskEntity.getTasks()==null){
            if(taskEntity.isUser() && !taskEntity.isList()){
                message = "User not found";
