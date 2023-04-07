@@ -117,7 +117,7 @@ public class ListDaoImpl implements ListDao{
             theList = l.get();
             theList.setTitle(list.getTitle());
             theList.setDescription(list.getDescription());
-            if(theList.getUser().getId() == listId){
+            if(theList.getUser().getId() == userId){
                 listRepository.save(theList);
                 return new ListEntity(theList, false);
             }
