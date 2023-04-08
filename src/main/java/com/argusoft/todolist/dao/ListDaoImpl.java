@@ -68,79 +68,89 @@ public class ListDaoImpl implements ListDao{
 
     @Override
     @Transactional
-    public List addListToUser(int userId, List list) {
+    public ListEntity addListToUser(int userId, List list) {
         if(!checkUser(userId)){
-            return null;
+            return new ListEntity(null, true, false);
         }
         Optional<User> user = userRepository.findById(userId);
-        User theUser = null;
-        if(user.isPresent()){
-            theUser = user.get();
+        User theUser = user.get();
+        java.util.List<List> lists = getLists(userId);
+        for(List l : lists){
+            if(l.getTitle().equals(list.getTitle())){
+                return new ListEntity(list, false, true);
+            }
         }
-        return listRepository.save(new List(list.getTitle(), 
-                list.getDescription(), 0, theUser));        
+        List addedList = listRepository.save(new List(list.getTitle(), 
+                list.getDescription(), 0, theUser));
+        return new ListEntity(list, false, false);
     }
 
     @Override
     public ListEntity getSingleList(int userId, int listId) {
         boolean isUser;
         if(!checkUser(userId)){
-            isUser = true;
-            return new ListEntity(null, true);
+            return new ListEntity(null, true, false);
         }
         Optional<List> list = listRepository.findById(listId);
         List theList = null;
         if(list.isPresent()){
             theList = list.get();
             if(theList.getUser().getId() == userId){
-               return new ListEntity(theList, false);
+               return new ListEntity(theList, false, false);
             }
             else{
-                return new ListEntity(null, false);
+                return new ListEntity(null, false, false);
             }
         }
         
-        return new ListEntity(theList, false);
+        return new ListEntity(theList, false, false);
     }
 
     @Override
     @Transactional
     public ListEntity updateList(int userId, int listId, List list) {
         if(!checkUser(userId)){
-            return new ListEntity(null, true);
+            return new ListEntity(null, true, false);
         }
         Optional<List> l = listRepository.findById(listId);
         List theList = null;
         if(l.isPresent()){
             theList = l.get();
-            theList.setTitle(list.getTitle());
-            theList.setDescription(list.getDescription());
             if(theList.getUser().getId() == userId){
+                java.util.List<List> lists = getLists(userId);
+                for(List toUpdateList : lists){
+                    if(toUpdateList.getId()!=listId && toUpdateList.getTitle().equals(list.getTitle())){
+                        return new ListEntity(list, false, true);
+                    }
+                }
+                
+                theList.setTitle(list.getTitle());
+                theList.setDescription(list.getDescription());
                 listRepository.save(theList);
-                return new ListEntity(theList, false);
+                return new ListEntity(theList, false, false);
             }
             else{
-                return new ListEntity(null, false);
+                return new ListEntity(null, false, false);
             }
         }
-        return new ListEntity(theList, false);
+        return new ListEntity(theList, false, false);
     }
 
     @Override
     @Transactional
     public ListEntity deleteList(int userId, int listId) {
        if(!checkUser(userId)){
-           return new ListEntity(null, true);
+           return new ListEntity(null, true, false);
        }
        Optional<List> l = listRepository.findById(listId);
        List list = null;
        if(l.isPresent()){
            list = l.get();
            listRepository.delete(list);
-           return new ListEntity(list, false);
+           return new ListEntity(list, false, false);
        }
        else{
-           return new ListEntity(null, false);
+           return new ListEntity(null, false, false);
        }   
     }
     

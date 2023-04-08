@@ -14,7 +14,7 @@ import com.argusoft.todolist.utils.ListEntity;
 
 public interface ListDao {
     public java.util.List<List> getLists(int userId);
-    public List addListToUser(int userId, List list);
+    public ListEntity addListToUser(int userId, List list);
     public ListEntity getSingleList(int userId, int listId);
     public ListEntity updateList(int userId, int listId, List list);
     public ListEntity deleteList(int userId, int listId);

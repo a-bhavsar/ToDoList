@@ -53,17 +53,23 @@ public class ListController {
     }
     
     @PostMapping("lists")
-    public ResponseEntity<ResponseBodyObj<List>> addListToUser(@PathVariable int userId, @RequestBody List list){
-        List l = listService.addListToUser(userId, list);
+    public ResponseEntity<ResponseBodyObj<ListEntity>> addListToUser(@PathVariable int userId, @RequestBody List list){
+        ListEntity l = listService.addListToUser(userId, list);
         String message;
         HttpStatus statusCode;
-        if(l == null){
+        if(l.getList() == null){
             message = "User not found";
             statusCode = HttpStatus.NOT_FOUND;
         }
         else{
-            message = "List Added Successfully";
-            statusCode = HttpStatus.OK;
+            if(l.isDuplicateList()){
+                message = "List Title already exists";
+                statusCode = HttpStatus.NOT_ACCEPTABLE;
+            }
+            else{
+                message = "List Added Successfully";
+                statusCode = HttpStatus.OK;
+            }
         }
         ResponseBodyObj obj = new ResponseBodyObj(l, message, statusCode);
         return new ResponseEntity(obj, statusCode);
@@ -104,6 +110,10 @@ public class ListController {
         else if(listEntity.getList()==null && !listEntity.isUser()){
             message = "List not found";
             statusCode = HttpStatus.NOT_FOUND;
+        }
+        else if(listEntity.isDuplicateList()){
+            message = "List Title already exists";
+            statusCode = HttpStatus.NOT_ACCEPTABLE;
         }
         else{
             message = "List updated";

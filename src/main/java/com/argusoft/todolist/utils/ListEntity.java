@@ -15,10 +15,12 @@ import com.argusoft.todolist.entity.List;
 public class ListEntity {
     private List list;
     private boolean user;
+    private boolean duplicateList;
 
-    public ListEntity(List list, boolean isUser) {
+    public ListEntity(List list, boolean user, boolean duplicateList) {
         this.list = list;
-        this.user = isUser;
+        this.user = user;
+        this.duplicateList = duplicateList;
     }
 
     public List getList() {
@@ -36,5 +38,15 @@ public class ListEntity {
     public void setUser(boolean isUser) {
         this.user = isUser;
     }
+
+    public boolean isDuplicateList() {
+        return duplicateList;
+    }
+
+    public void setDuplicateList(boolean duplicateList) {
+        this.duplicateList = duplicateList;
+    }
+    
+    
     
 }

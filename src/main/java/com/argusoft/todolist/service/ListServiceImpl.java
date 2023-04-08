@@ -27,7 +27,7 @@ public class ListServiceImpl implements ListService{
     }
 
     @Override
-    public List addListToUser(int userId, com.argusoft.todolist.entity.List list) {
+    public ListEntity addListToUser(int userId, com.argusoft.todolist.entity.List list) {
         return listDao.addListToUser(userId, list);    
     }
 
