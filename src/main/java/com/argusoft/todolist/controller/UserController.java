@@ -70,7 +70,6 @@ public class UserController {
     @PostMapping("")
     public ResponseEntity<ResponseBodyObj<User>> createUser(@RequestBody User user){
         UserEntity u = userService.createUser(user);
-        System.out.println(u);
         String message;
         HttpStatus statusCode;
         if(!u.isValidUser() && !u.isValidMobile()){
@@ -89,7 +88,6 @@ public class UserController {
             message = "User Created";
             statusCode = HttpStatus.OK;
         }
-        System.out.println("user" + u.getUser());
         ResponseBodyObj obj = new ResponseBodyObj(u.getUser(), message, statusCode);
         return new ResponseEntity<>(obj, statusCode);
     }

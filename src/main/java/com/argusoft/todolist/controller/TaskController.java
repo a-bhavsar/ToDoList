@@ -57,7 +57,6 @@ public class TaskController {
             }
        }
        else{
-           System.out.println("Hello");
            message = "Task created";
            statusCode = HttpStatus.OK;
        }

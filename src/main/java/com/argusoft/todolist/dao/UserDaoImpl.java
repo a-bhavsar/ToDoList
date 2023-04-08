@@ -55,16 +55,12 @@ public class UserDaoImpl implements UserDao {
                 return new UserEntity(user, true, false, false);
             }
         }
-        System.out.println("Why this error");
         User u1 = userRepository.save(new User(user.getUsername(), user.getPassword(), user.getMobileNo()));
-        System.out.println(u1);
         return new UserEntity(u1, true, false, true);
     }
 
     @Override
     public User updateUser(int userId, User user) {
-        
-        
         Optional<User> u1 = userRepository.findById(userId);
         User u = null;
         if(u1.isPresent()){
@@ -95,7 +91,6 @@ public class UserDaoImpl implements UserDao {
         for(User u : users){
             if(u.getUsername().equals(user.getUsername())){
                 if(u.getPassword().equals(user.getPassword())){
-                    System.out.println("Logged in user is " + u);
                     return new UserEntity(u, true, false);
                 }
                 else{

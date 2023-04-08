@@ -59,7 +59,6 @@ public class ListDaoImpl implements ListDao{
         java.util.List<List> lists = listRepository.findAll();
         java.util.List<List> myLists = new ArrayList<>();
         for(List l : lists){
-            System.out.println("List is " + l);
             if(l.getUser().getId() == userId){
                 myLists.add(l);
             }
@@ -93,7 +92,6 @@ public class ListDaoImpl implements ListDao{
         List theList = null;
         if(list.isPresent()){
             theList = list.get();
-            System.out.println("list is" + list);
             if(theList.getUser().getId() == userId){
                return new ListEntity(theList, false);
             }

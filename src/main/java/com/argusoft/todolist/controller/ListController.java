@@ -39,7 +39,6 @@ public class ListController {
     
     @GetMapping("lists")
     public ResponseEntity<ResponseBodyObj<java.util.List<List>>> getLists(@PathVariable int userId){
-           System.out.println("Swagat karo humara");
         java.util.List<List> lists = listService.getLists(userId);
         String message;
         HttpStatus statusCode = HttpStatus.OK;
