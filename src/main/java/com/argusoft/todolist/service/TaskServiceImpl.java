@@ -23,6 +23,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskEntity createTask(int userId, int listId, Task task) {
+        if(task.getStatus()==null){
+            task.setStatus("PENDING");
+        }
         return taskDao.createTask(userId, listId, task);
     }
 

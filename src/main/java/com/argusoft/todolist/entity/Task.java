@@ -14,7 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 /**
  *
@@ -46,10 +46,10 @@ public class Task {
     
     
     @Column(name="start_date")
-    private Timestamp startDate;
+    private Date startDate;
 
     @Column(name="end_date")
-    private Timestamp endDate;
+    private Date endDate;
     
     public int getId() {
         return id;
@@ -91,19 +91,19 @@ public class Task {
         this.list = list;
     }
 
-    public Timestamp getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

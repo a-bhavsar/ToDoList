@@ -57,8 +57,15 @@ public class TaskController {
             }
        }
        else{
-           message = "Task created";
-           statusCode = HttpStatus.OK;
+           if(taskEntity.isDuplicateTask()){
+               message = "Task Title already exists";
+               statusCode = HttpStatus.NOT_ACCEPTABLE;
+           }
+           else{
+               message = "Task created";
+               statusCode = HttpStatus.OK;
+           }
+           
        }
        ResponseBodyObj obj = new ResponseBodyObj(taskEntity.getTask(), message, statusCode);
        return new ResponseEntity(obj, statusCode);
@@ -136,8 +143,15 @@ public class TaskController {
            }
        }
        else{
-           message = "Task Updated";
-           statusCode = HttpStatus.OK;
+           if(taskEntity.isDuplicateTask()){
+               message = "Task Title already exists";
+               statusCode = HttpStatus.NOT_ACCEPTABLE;
+           }
+           else{
+               message = "Task Updated";
+               statusCode = HttpStatus.OK;
+           }
+           
        }
        ResponseBodyObj obj = new ResponseBodyObj(taskEntity.getTask(), message, statusCode);
        return new ResponseEntity(obj, statusCode);

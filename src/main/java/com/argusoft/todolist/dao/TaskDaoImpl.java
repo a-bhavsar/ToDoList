@@ -32,7 +32,7 @@ public class TaskDaoImpl implements TaskDao {
     @Autowired
     private UserRepository userRepository;
 
-    private boolean checkUser(int userId) {
+    private boolean checkUser(int userId, int listId) {
         Optional<User> user = userRepository.findById(userId);
         User theUser = null;
         if (user.isPresent()) {
@@ -40,6 +40,14 @@ public class TaskDaoImpl implements TaskDao {
         }
         if (theUser == null) {
             return false;
+        }
+        List theList = null;
+        Optional<List> list = listRepository.findById(listId);
+        if(list.isPresent()){
+            theList = list.get();
+            if(theList.getUser().getId() != userId){
+                return false;
+            }
         }
         return true;
     }
@@ -58,28 +66,37 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public TaskEntity createTask(int userId, int listId, Task task) {
-        if (!checkUser(userId)) {
-            return new TaskEntity(null, true, false);
+        if (!checkUser(userId, listId)) {
+            return new TaskEntity(null, true, false, false);
         }
         Optional<List> list = listRepository.findById(listId);
         List theList = null;
         if (list.isPresent()) {
             theList = list.get();
+            if(theList.getUser().getId() != userId){
+                return new TaskEntity(null, true, false, false);
+            }
         }
         if (theList == null) {
-            return new TaskEntity(null, false, true);
+            return new TaskEntity(null, false, true, false);
         } else if (theList.getUser().getId() != userId) {
-            return new TaskEntity(null, false, true);
+            return new TaskEntity(null, false, true, false);
         } else {
+            java.util.List<Task> tasks = getAllTasks(userId, listId).getTasks();
+            for(Task t : tasks){
+                if(t.getTitle().equals(task.getTitle())){
+                    return new TaskEntity(task, false, false, true);
+                }
+            }
             task.setList(theList);
             taskRepository.save(task);
-            return new TaskEntity(task, false, false);
+            return new TaskEntity(task, false, false, false);
         }
     }
 
     @Override
     public TaskEntity getAllTasks(int userId, int listId) {
-        if (!checkUser(userId)) {
+        if (!checkUser(userId, listId)) {
             return new TaskEntity(true, false, null);
         } else if (!checkList(listId)) {
             return new TaskEntity(false, true, null);
@@ -104,7 +121,7 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public TaskEntity getSingleTask(int userId, int listId, int taskId) {
-        if (!checkUser(userId)) {
+        if (!checkUser(userId, listId)) {
             return new TaskEntity(null, true, false);
         } else if (!checkList(listId)) {
             return new TaskEntity(null, false, true);
@@ -137,35 +154,45 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public TaskEntity updateTask(int userId, int listId, int taskId, Task task) {
-        if (!checkUser(userId)) {
-            return new TaskEntity(null, true, false);
-        } else if (!checkList(listId)) {
-            return new TaskEntity(null, false, true);
-        } else {
+        if (!checkUser(userId, listId)) {
+            return new TaskEntity(null, true, false, false);
+        } 
+        else if (!checkList(listId)) {
+            return new TaskEntity(null, false, true, false);
+        }
+        else {
             List list = listRepository.findById(listId).get();
             if (list.getUser().getId() != userId) {
-                return new TaskEntity(null, false, true);
-            } else {
+                return new TaskEntity(null, false, true, false);
+            } 
+            else {
                 Optional<Task> t = taskRepository.findById(taskId);
                 Task theTask = null;
                 if (t.isPresent()) {
                     theTask = t.get();
                 }
                 if (theTask == null) {
-                    return new TaskEntity(null, true, true);
+                    return new TaskEntity(null, true, true, false);
                 }
                 else{
                     if(theTask.getList().getId()!=listId){
-                        return new TaskEntity(null, true, true);
+                        return new TaskEntity(null, true, true, false);
                     }
                     else{
+                        TaskEntity taskEntity = getAllTasks(userId, listId);
+                        java.util.List<Task> tasks  = taskEntity.getTasks();
+                        for(Task t1 : tasks){
+                            if(t1.getTitle().equals(task.getTitle()) && t1.getId() != taskId){
+                                return new TaskEntity(theTask, false, false, true);
+                            }
+                        }
                         theTask.setTitle(task.getTitle());
                         theTask.setDescription(task.getDescription());
                         theTask.setStatus(task.getStatus());
                         theTask.setStartDate(task.getStartDate());
                         theTask.setEndDate(task.getEndDate());
                         taskRepository.save(theTask);
-                        return new TaskEntity(theTask, false, false);
+                        return new TaskEntity(theTask, false, false, false);
                     } 
                 }
             }
@@ -177,7 +204,7 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public TaskEntity deleteTask(int userId, int listId, int taskId) {
-        if (!checkUser(userId)) {
+        if (!checkUser(userId, listId)) {
             return new TaskEntity(null, true, false);
         }
         else if (!checkList(listId)) {

@@ -16,6 +16,7 @@ public class TaskEntity {
     private boolean user;
     private boolean list;
     private java.util.List<Task> tasks;
+    private boolean duplicateTask;
 
     public TaskEntity() {
     }
@@ -30,6 +31,22 @@ public class TaskEntity {
         this.tasks = tasks;
         this.user = user;
         this.list = list;    
+    }
+    
+    public TaskEntity(Task task, boolean user, boolean list, boolean duplicateTask){
+        this.task = task;
+        this.user = user;
+        this.list = list;
+        this.duplicateTask = duplicateTask;
+        
+    }
+
+    public boolean isDuplicateTask() {
+        return duplicateTask;
+    }
+
+    public void setDuplicateTask(boolean duplicateTask) {
+        this.duplicateTask = duplicateTask;
     }
 
     public Task getTask() {
